@@ -15,9 +15,12 @@ return new class extends Migration
     {
         Schema::create('shorteners', function (Blueprint $table) {
             $table->id();
-            $table->string('linked_url', 5);
-            $table->mediumText('shortened_url');
+            $table->string('shortened_url', 5)->unique();
+            $table->mediumText('linked_url');
+            $table->mediumInteger('interactions')->default(0);
             $table->timestamps();
+
+            $table->foreignId('user_id')->nullable()->constrained();
         });
     }
 
