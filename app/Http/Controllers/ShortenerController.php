@@ -22,16 +22,16 @@ class ShortenerController extends Controller
         try {
             return new JsonResponse(Shortener::all());
         } catch (Exception $e) {
-            $this->serverErrorMessage();
+            return $this->serverErrorMessage();
         }
     }
 
-    public function find($id = null)
+    public function find($key = null)
     {
         try {
-            return new JsonResponse(Shortener::find($id));
+            return new JsonResponse(Shortener::where(['shortener_key', $key])->first());
         } catch (Exception $e) {
-            $this->serverErrorMessage();
+            return $this->serverErrorMessage();
         }
     }
 

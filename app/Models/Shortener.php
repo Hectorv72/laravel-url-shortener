@@ -13,7 +13,7 @@ class Shortener extends Model
 
     protected $fillable = [
         'user_id',
-        'shortened_url',
+        'shortened_key',
         'linked_url',
         'interactions'
     ];
