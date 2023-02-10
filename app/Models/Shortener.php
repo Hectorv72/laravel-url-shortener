@@ -15,7 +15,8 @@ class Shortener extends Model
         'user_id',
         'shortened_key',
         'linked_url',
-        'interactions'
+        'interactions',
+        'life_time',
     ];
 
     public function user()

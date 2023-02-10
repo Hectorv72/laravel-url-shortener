@@ -57,6 +57,7 @@ class ShortenerController extends Controller
                 $shortener = new Shortener([
                     'shortened_key' => Str::random(5),
                     'linked_url' => $request->input('url'),
+                    'life_time' => date('Y-m-d', strtotime(date('Y-m-d') . '+2 days')),
                     'user_id' => $user
                 ]);
                 $shortener->save();

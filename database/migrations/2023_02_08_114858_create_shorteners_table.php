@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('shortened_key', 5)->unique();
             $table->mediumText('linked_url');
             $table->mediumInteger('interactions')->default(0);
+            $table->date('life_time');
             $table->timestamps();
 
             $table->foreignId('user_id')->nullable()->constrained();
