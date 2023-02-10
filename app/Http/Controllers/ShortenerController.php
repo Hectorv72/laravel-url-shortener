@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Shortener;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Exception;
@@ -11,11 +12,25 @@ use PDOException;
 
 class ShortenerController extends Controller
 {
-
+    private $errorMessage = "Lo sentimos, ocurrió un error vuelva a intentarlo más tárde";
     private function serverErrorMessage($e)
     {
         error_log($e->getMessage());
-        return new JsonResponse(["message" => "Ocurrió un error, vuelva a intentarlo más tárde"], 500);
+        return new JsonResponse(["message" => $this->errorMessage], 500);
+    }
+
+    public function show($key = '')
+    {
+        try {
+            $shortener = Shortener::where('shortened_key', $key)->first();
+            if ($shortener) {
+                return view('redirect', ['urldir' => $shortener->linked_url]);
+            }
+            return new Response('<h1>Lo sentimos, no existe ningún acortador con esa clave :(</h1>');
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return new Response("<h1>" . $this->errorMessage . "</h1>");
+        }
     }
 
     public function all()
