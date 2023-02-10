@@ -11,16 +11,28 @@ use PDOException;
 
 class ShortenerController extends Controller
 {
-    private $errorMessage = ["message" => "Ocurrió un error, vuelva a intentarlo más tárde"];
+
+    private function serverErrorMessage()
+    {
+        return new JsonResponse(["message" => "Ocurrió un error, vuelva a intentarlo más tárde"], 500);
+    }
 
     public function all()
     {
-        return new JsonResponse(Shortener::all());
+        try {
+            return new JsonResponse(Shortener::all());
+        } catch (Exception $e) {
+            $this->serverErrorMessage();
+        }
     }
 
     public function find($id = null)
     {
-        return new JsonResponse(Shortener::find($id));
+        try {
+            return new JsonResponse(Shortener::find($id));
+        } catch (Exception $e) {
+            $this->serverErrorMessage();
+        }
     }
 
     /**
@@ -48,9 +60,9 @@ class ShortenerController extends Controller
             if ($e->getCode() == 23000) {
                 return new JsonResponse(["message" => "Los campos enviados no corresponden a un objeto, revise y vuelva a intentarlo"], 400);
             }
-            return new JsonResponse($this->errorMessage, 500);
+            return $this->serverErrorMessage();
         } catch (Exception $e) {
-            return new JsonResponse($this->errorMessage, 500);
+            return $this->serverErrorMessage();
         }
     }
 }
