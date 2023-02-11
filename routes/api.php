@@ -24,7 +24,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // SHORTENER
 Route::get('/links', [ShortenerController::class, 'all']);
 Route::get('/links/{key}', [ShortenerController::class, 'find']);
-Route::post('/links', [ShortenerController::class, 'create']);
+Route::middleware('auth.optional')->post('/links', [ShortenerController::class, 'create']);
+
+// Route::group(['middleware' => ['auth:sanctum']]);
 
 // AUTH
 Route::post('/register', [AuthController::class, 'register']);
