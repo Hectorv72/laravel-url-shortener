@@ -5,18 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Shortener;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Exception;
 use PDOException;
 
 class ShortenerController extends Controller
 {
-    private $errorMessage = "Lo sentimos, ocurrió un error vuelva a intentarlo más tárde";
+    private $errorMessage = 'Lo sentimos, ocurrió un error vuelva a intentarlo más tárde';
     private function serverErrorMessage($e)
+
     {
         error_log($e->getMessage());
-        return new JsonResponse(["message" => $this->errorMessage], 500);
+        return response()->json(['message' => $this->errorMessage], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     public function show($key = '')
@@ -26,17 +26,17 @@ class ShortenerController extends Controller
             if ($shortener) {
                 return view('redirect', ['urldir' => $shortener->linked_url]);
             }
-            return new Response('<h1>Lo sentimos, no existe ningún acortador con esa clave :(</h1>');
+            return response('<h1>Lo sentimos, no existe ningún acortador con esa clave :(</h1>');
         } catch (Exception $e) {
             error_log($e->getMessage());
-            return new Response("<h1>" . $this->errorMessage . "</h1>");
+            return response('<h1>' . $this->errorMessage . '</h1>');
         }
     }
 
     public function all()
     {
         try {
-            return new JsonResponse(Shortener::all(), 200);
+            return response()->json(Shortener::all(), Response::HTTP_OK);
         } catch (Exception $e) {
             return $this->serverErrorMessage($e);
         }
@@ -47,9 +47,9 @@ class ShortenerController extends Controller
         try {
             $shortener = Shortener::where('shortened_key', $key)->first();
             if ($shortener) {
-                return new JsonResponse($shortener->setHidden(['updated_at', 'created_at', 'user_id', 'id']), 200);
+                return response()->json($shortener->setHidden(['updated_at', 'created_at', 'user_id', 'id']), Response::HTTP_OK);
             } else {
-                return new JsonResponse(["message" => "No existe un acortador con esa clave"], 404);
+                return response()->json(['message' => 'No existe un acortador con esa clave'], Response::HTTP_NOT_FOUND);
             }
         } catch (Exception $e) {
             return $this->serverErrorMessage($e);
@@ -60,7 +60,6 @@ class ShortenerController extends Controller
      * Busca entre los registros la url enviada y verifica su existencia
      * En caso de encontrarla: Devuelve como respuesta la información del registro existente
      * En caso de no existir: Crea un nuevo registro con la información
-     * @return JsonResponse
      */
     public function create(Request $request)
     {
@@ -77,10 +76,10 @@ class ShortenerController extends Controller
                 ]);
                 $shortener->save();
             }
-            return new JsonResponse($shortener->setHidden(['updated_at', 'created_at', 'user_id', 'id'])->toArray(), 200);
+            return response()->json($shortener->setHidden(['updated_at', 'created_at', 'user_id', 'id'])->toArray(), Response::HTTP_OK);
         } catch (PDOException $e) {
             if ($e->getCode() == 23000) {
-                return new JsonResponse(["message" => "Los campos enviados no corresponden a un objeto, revise y vuelva a intentarlo"], 400);
+                return response()->json(['message' => 'Los campos enviados no corresponden a un objeto, revise y vuelva a intentarlo'], Response::HTTP_BAD_REQUEST);
             }
             return $this->serverErrorMessage($e);
         } catch (Exception $e) {
@@ -96,7 +95,7 @@ class ShortenerController extends Controller
             if ($shortener) {
                 if ($shortener->user_id == $user?->id) {
                     $shortener->delete();
-                    return new JsonResponse(["message" => "Link eliminado correctamente"], 200);
+                    return response()->json(['message' => 'Link eliminado correctamente'], Response::HTTP_OK);
                 }
             }
         } catch (Exception $e) {
