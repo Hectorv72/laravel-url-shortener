@@ -17,10 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            // $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->smallInteger('limit_links');
-            $table->rememberToken();
+            $table->smallInteger('limit_links')->default(env('SHORTENER_LIMITPERUSER '));
+            // $table->rememberToken();
             $table->timestamps();
         });
     }
