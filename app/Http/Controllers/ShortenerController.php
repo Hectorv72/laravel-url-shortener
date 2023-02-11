@@ -12,6 +12,8 @@ class ShortenerController extends Controller
         try {
             $shortener = Shortener::where('shortened_key', $key)->first();
             if ($shortener) {
+                $shortener->interactions += 1;
+                $shortener->save();
                 return view('redirect', ['urldir' => $shortener->linked_url]);
             }
             return response('<h1>Lo sentimos, no existe ningún acortador con esa clave :(</h1>');
