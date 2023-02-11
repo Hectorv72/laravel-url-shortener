@@ -23,10 +23,12 @@ use Illuminate\Support\Facades\Route;
 
 
 // SHORTENER
-Route::get('/links', [ShortenerApiController::class, 'all']);
-Route::get('/links/{key}', [ShortenerApiController::class, 'find']);
-Route::middleware('auth.optional')->post('/links', [ShortenerApiController::class, 'create']);
-
+Route::prefix('link')->group(function () {
+    Route::get('/', [ShortenerApiController::class, 'all']);
+    Route::post('/', [ShortenerApiController::class, 'create'])->middleware('auth.optional');
+    Route::delete('/', [ShortenerApiController::class, 'delete'])->middleware('auth:sanctum');
+    Route::get('/{key}', [ShortenerApiController::class, 'find']);
+});
 
 // AUTH
 Route::post('/register', [AuthController::class, 'register']);
