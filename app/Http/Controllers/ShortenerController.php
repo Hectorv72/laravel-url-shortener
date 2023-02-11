@@ -87,4 +87,20 @@ class ShortenerController extends Controller
             return $this->serverErrorMessage($e);
         }
     }
+
+    public function delete($key)
+    {
+        $user = null;
+        try {
+            $shortener = Shortener::find($key);
+            if ($shortener) {
+                if ($shortener->user_id == $user?->id) {
+                    $shortener->delete();
+                    return new JsonResponse(["message" => "Link eliminado correctamente"], 200);
+                }
+            }
+        } catch (Exception $e) {
+            return $this->serverErrorMessage($e);
+        }
+    }
 }
