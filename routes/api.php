@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\ShortenerController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\ShortenerApiController;
+// use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,16 +17,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
 
 // SHORTENER
-Route::get('/links', [ShortenerController::class, 'all']);
-Route::get('/links/{key}', [ShortenerController::class, 'find']);
-Route::middleware('auth.optional')->post('/links', [ShortenerController::class, 'create']);
+Route::get('/links', [ShortenerApiController::class, 'all']);
+Route::get('/links/{key}', [ShortenerApiController::class, 'find']);
+Route::middleware('auth.optional')->post('/links', [ShortenerApiController::class, 'create']);
 
-// Route::group(['middleware' => ['auth:sanctum']]);
 
 // AUTH
 Route::post('/register', [AuthController::class, 'register']);
