@@ -23,19 +23,21 @@ use Illuminate\Support\Facades\Route;
 
 
 // SHORTENER
-Route::prefix('link')->group(function () {
-    Route::get('/', [ShortenerApiController::class, 'all']);
-    Route::post('/', [ShortenerApiController::class, 'create'])->middleware('auth.optional');
-    Route::delete('/', [ShortenerApiController::class, 'delete'])->middleware('auth:sanctum');
-    Route::get('/{key}', [ShortenerApiController::class, 'find']);
+Route::group(['prefix' => 'shortener', 'as' => 'api.shortener.'], function () {
+    Route::get('/', [ShortenerApiController::class, 'all'])->name('all');
+    Route::get('/{key}', [ShortenerApiController::class, 'find'])->name('find');
+    Route::middleware('auth.optional')->post('/', [ShortenerApiController::class, 'create'])->name('create');
 });
 
-// AUTH
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
 
-Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'user'], function () {
-    Route::get('/all', [AuthController::class, 'all']);
-    Route::get('/profile', [AuthController::class, 'profile']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+// AUTH
+Route::group(['as' => 'api.auth.'], function () {
+    Route::post('/register', [AuthController::class, 'register'])->name('register');
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
+
+    Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'user'], function () {
+        Route::get('/all', [AuthController::class, 'all'])->name('all');
+        Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
+        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    });
 });
